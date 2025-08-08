@@ -19,7 +19,6 @@ export default function JobCard({
   const rotate = useTransform(x, [-200, 0, 200], [-10, 0, 10]);
   const opacity = useTransform(x, [-150, 0, 150], [0.2, 1, 0.2]);
   const [isDragging, setIsDragging] = useState(false);
-  const [feedback, setFeedback] = useState<null | "left" | "right">(null);
 
   const stackStyle = useMemo(() => {
     const translateY = indexInStack * 10; // px
@@ -35,12 +34,10 @@ export default function JobCard({
       if (latest > 35) {
         setIsDragging(false);
         animate(x, 500, { duration: 0.28 });
-        setFeedback("right");
         onSwipe("right", job);
       } else if (latest < -35) {
         setIsDragging(false);
         animate(x, -500, { duration: 0.28 });
-        setFeedback("left");
         onSwipe("left", job);
       }
     });
@@ -72,6 +69,10 @@ export default function JobCard({
       }}
     >
       <div className="pointer-events-none absolute inset-0 shine" />
+      {/* Full-surface color feedback overlay */}
+      {isTop && (
+        <div className="pointer-events-none absolute inset-0" style={{ background: x.get() > 0 ? "rgba(0,200,120,0.08)" : x.get() < 0 ? "rgba(220,40,60,0.08)" : "transparent" }} />
+      )}
       <div className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-md overflow-hidden bg-[var(--chip-bg)] border flex items-center justify-center" style={{ borderColor: "var(--chip-border)" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -117,16 +118,9 @@ export default function JobCard({
         </div>
       ) : null}
       {job.url ? (
-        <a href={job.url} target="_blank" className="inline-block mt-3 text-sm md:text-base text-white underline">
+        <a href={job.url} target="_blank" className="inline-block mt-3 text-sm md:text-base underline" style={{ color: "var(--text-muted)" }}>
           View source
         </a>
-      ) : null}
-      {isTop && feedback ? (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className={`px-3 py-1 rounded-md text-sm font-semibold ${feedback === "right" ? "bg-[var(--accent)] text-black" : "bg-white text-black"}`}>
-            {feedback === "right" ? "Saved" : "Skipped"}
-          </div>
-        </div>
       ) : null}
     </motion.div>
   );

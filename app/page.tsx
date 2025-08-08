@@ -52,14 +52,17 @@ export default function Home() {
   }, [index, jobs]);
 
   async function handleSwipe(dir: "left" | "right", job: Job) {
+    // Advance immediately for responsiveness
+    setIndex((i) => Math.min(i + 1, jobs.length));
+    // Fire-and-forget save to favorites
     if (dir === "right") {
-      await fetch("/api/favorites", {
+      void fetch("/api/favorites", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ jobId: job.id, title: job.title, url: job.url }),
-      });
+        keepalive: true,
+      }).catch(() => {});
     }
-    setIndex((i) => Math.min(i + 1, jobs.length));
   }
 
   // Arrow key support for desktop
