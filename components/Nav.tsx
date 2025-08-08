@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Nav() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   return (
     <nav className="w-full flex items-center justify-between p-4 border-b border-white/10">
       <Link href="/" className="font-semibold">Hacker Hinge</Link>
