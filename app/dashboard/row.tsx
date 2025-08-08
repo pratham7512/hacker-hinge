@@ -28,8 +28,8 @@ export default function FavoriteRow({ item }: { item: Fav }) {
         {/* Desktop hover delete */}
         <button
           onClick={remove}
-          className="hidden md:block absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-md bg-transparent border"
-          style={{ borderColor: hover ? "var(--card-border)" : "transparent", opacity: hover ? 1 : 0 }}
+          className="hidden md:block absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-md bg-[var(--background)] border transition-opacity"
+          style={{ borderColor: hover ? "var(--card-border)" : "var(--card-border)", opacity: hover ? 1 : 0.6 }}
         >
           <span className="sr-only">Delete</span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
