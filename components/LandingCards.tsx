@@ -38,7 +38,7 @@ export default function LandingCards() {
   }
 
   return (
-    <div className="relative mt-4 w-[94vw] max-w-sm h-[36vh] sm:h-[40vh] mx-auto">
+    <div className="relative mt-3 w-full max-w-sm h-[32vh] sm:h-[38vh] mx-auto overflow-visible">
       <AutoCard key={next.id} card={next} isTop={false} indexInStack={1} />
       <AutoCard key={current.id} card={current} isTop indexInStack={0} onDone={advance} />
     </div>
@@ -69,27 +69,27 @@ function AutoCard({ card, isTop, indexInStack, onDone }: { card: InfoCard; isTop
 
   return (
     <motion.div
-      className="absolute left-1/2 -translate-x-1/2 w-[94vw] max-w-sm h-full bg-[var(--card-bg)] border rounded-2xl p-5 shadow-xl overflow-hidden"
+      className="absolute left-1/2 -translate-x-1/2 w-full max-w-sm h-full bg-[var(--card-bg)] border rounded-2xl p-4 sm:p-5 shadow-xl overflow-hidden"
       style={{ x, rotate, opacity, y: translateY, scale, zIndex, borderColor: "var(--card-border)", willChange: "transform" }}
     >
       <div className="pointer-events-none absolute inset-0 shine" />
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2 sm:gap-3">
         <div className="flex-1 min-w-0">
-          <div className="text-[18px] md:text-xl leading-6 line-clamp-2">{card.title}</div>
-          <div className="text-xs md:text-sm opacity-60 truncate">{card.domain}</div>
+          <div className="text-[16px] sm:text-[18px] md:text-xl leading-6 line-clamp-2">{card.title}</div>
+          <div className="text-[11px] sm:text-xs md:text-sm opacity-60 truncate">{card.domain}</div>
         </div>
       </div>
-      <div className="mt-3 flex flex-col h-[calc(100%-70px)]">
+      <div className="mt-2 sm:mt-3 flex flex-col h-[calc(100%-64px)]">
         {card.description ? (
-          <p className="text-[15px] md:text-base opacity-80 line-clamp-6 text-left">
+          <p className="text-[13px] sm:text-[15px] md:text-base opacity-80 line-clamp-6 text-left">
             {card.description} With Hacker Hinge you also get keyboard controls on desktop, lightweight UI, and a
             personal favorites board.
           </p>
         ) : null}
         {Array.isArray(card.tags) && card.tags.length ? (
-          <div className="mt-auto pt-3 flex flex-wrap gap-2">
+          <div className="mt-auto pt-2 sm:pt-3 flex flex-wrap gap-2">
             {card.tags.map((t) => (
-              <span key={t} className="text-xs md:text-sm px-2 py-0.5 rounded-full border" style={{ background: "var(--chip-bg)", borderColor: "var(--chip-border)" }}>
+              <span key={t} className="text-[11px] sm:text-xs md:text-sm px-2 py-0.5 rounded-full border" style={{ background: "var(--chip-bg)", borderColor: "var(--chip-border)" }}>
                 {t}
               </span>
             ))}

@@ -43,10 +43,10 @@ export default function FavoriteRow({ item }: { item: Fav }) {
 
         <motion.div
           drag="x"
-          dragConstraints={{ left: -80, right: 0 }}
+          dragConstraints={{ left: -40, right: 0 }}
           style={{ x }}
           onDragEnd={(_, info) => {
-            if (info.offset.x <= -60) {
+            if (info.offset.x <= -35) {
               animate(x, -300, { duration: 0.25 });
               remove();
             } else {
