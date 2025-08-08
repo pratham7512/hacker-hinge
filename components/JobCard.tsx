@@ -31,11 +31,11 @@ export default function JobCard({
     if (!isTop || !onSwipe) return;
     const unsubscribe = x.on("change", (latest) => {
       if (!isDragging) return;
-      if (latest > 120) {
+      if (latest > 80) {
         setIsDragging(false);
         animate(x, 500, { duration: 0.28 });
         onSwipe("right", job);
-      } else if (latest < -120) {
+      } else if (latest < -80) {
         setIsDragging(false);
         animate(x, -500, { duration: 0.28 });
         onSwipe("left", job);
@@ -59,13 +59,13 @@ export default function JobCard({
       }}
       drag={isTop ? "x" : false}
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.12}
+      dragElastic={1}
       dragMomentum={false}
       onDragStart={() => isTop && setIsDragging(true)}
       onDragEnd={(_, info) => {
         if (!isTop) return;
         setIsDragging(false);
-        if (Math.abs(info.offset.x) < 90) animate(x, 0, { duration: 0.2 });
+        if (Math.abs(info.offset.x) < 60) animate(x, 0, { duration: 0.2 });
       }}
     >
       <div className="pointer-events-none absolute inset-0 shine" />
