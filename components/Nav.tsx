@@ -33,7 +33,7 @@ export default function Nav() {
       </nav>
       {/* Bottom menu for mobile only */}
       {!isLanding ? (
-        <div className="fixed bottom-0 left-0 right-0 border-t bg-black/85 backdrop-blur supports-[backdrop-filter]:bg-black/65 sm:hidden" style={{ borderColor: "var(--card-border)" }}>
+        <div className="fixed bottom-0 left-0 right-0 border-t bg-black  sm:hidden" style={{ borderColor: "var(--card-border)" }}>
           <div className="max-w-md mx-auto flex items-center justify-around py-3">
             <Link href="/" className="px-8 py-3 text-base" aria-label="Cards">
               <img src="/icons/cards.svg" alt="cards" className={`w-7 h-7 ${onDashboard ? 'opacity-60' : 'opacity-100'}`} />
