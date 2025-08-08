@@ -3,14 +3,13 @@ import { prisma } from "@/lib/db";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import { redirect } from "next/navigation";
-import type { FavoriteJob } from "@prisma/client";
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session) {
     redirect("/");
   }
-  const favorites: FavoriteJob[] = session?.user?.id
+  const favorites = session?.user?.id
     ? await prisma.favoriteJob.findMany({
         where: { userId: session.user.id },
         orderBy: { addedAt: "desc" },
@@ -26,7 +25,7 @@ export default async function DashboardPage() {
           <p className="text-white/60">No favorites yet. Swipe right on jobs to save.</p>
         ) : (
           <ul className="space-y-3">
-            {favorites.map((f) => (
+            {favorites.map((f: { id: string; title: string; url: string | null }) => (
               <li key={f.id} className="bg-[#0c0c0c] border border-white/10 rounded-lg p-4">
                 <div className="text-base">{f.title}</div>
                 {f.url ? (
