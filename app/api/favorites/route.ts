@@ -28,7 +28,8 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { id, jobId } = await req.json().catch(() => ({} as any));
+  type Payload = { id?: string; jobId?: string };
+  const { id, jobId } = (await req.json().catch(() => ({}))) as Payload;
   try {
     if (id) {
       await prisma.favoriteJob.delete({ where: { id } });
