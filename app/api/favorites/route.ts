@@ -25,4 +25,22 @@ export async function POST(req: Request) {
   return NextResponse.json({ favorite: fav });
 }
 
+export async function DELETE(req: Request) {
+  const session = await auth();
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { id, jobId } = await req.json().catch(() => ({} as any));
+  try {
+    if (id) {
+      await prisma.favoriteJob.delete({ where: { id } });
+    } else if (jobId) {
+      await prisma.favoriteJob.delete({ where: { userId_jobId: { userId: session.user.id, jobId } } });
+    } else {
+      return NextResponse.json({ error: "Missing id or jobId" }, { status: 400 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
+  }
+}
+
 

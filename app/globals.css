@@ -3,6 +3,24 @@
 :root{
   --background:#000;
   --foreground:#fff;
+  --accent:#ff6600; /* Y Combinator orange */
+  --card-bg:#0c0c0c;
+  --card-border:rgba(255,255,255,0.1);
+  --chip-bg:rgba(255,255,255,0.05);
+  --chip-border:rgba(255,255,255,0.1);
+  --text-muted:rgba(255,255,255,0.8);
+  --text-subtle:rgba(255,255,255,0.6);
+}
+
+[data-theme="light"]{
+  --background:#fff;
+  --foreground:#000;
+  --card-bg:#fff;
+  --card-border:rgba(0,0,0,0.12);
+  --chip-bg:rgba(0,0,0,0.05);
+  --chip-border:rgba(0,0,0,0.12);
+  --text-muted:rgba(0,0,0,0.75);
+  --text-subtle:rgba(0,0,0,0.6);
 }
 
 @theme inline{
@@ -23,8 +41,19 @@ body{
   height:40px;
   border-radius:9999px;
   border:3px solid rgba(255,255,255,0.15);
-  border-top-color:#fff;
+  border-top-color:var(--accent);
   animation:spin 1s linear infinite;
 }
 
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* card shine */
+.shine{
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 8%, transparent 16%);
+  transform: translateX(-120%);
+  animation: shine-move 2.6s linear infinite;
+}
+@keyframes shine-move{
+  0%{ transform: translateX(-120%); }
+  100%{ transform: translateX(120%); }
+}

@@ -48,19 +48,24 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-dvh flex items-center justify-center p-6">
-      <div className="bg-[#0c0c0c] border border-white/10 rounded-xl p-6 w-full max-w-sm">
-        <h1 className="text-lg mb-4 text-center">{mode === "signin" ? "Sign in" : "Create account"}</h1>
+      <div className="bg-[var(--card-bg)] border rounded-xl p-6 w-full max-w-sm" style={{ borderColor: "var(--card-border)" }}>
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <img src="/logo-h.svg" alt="H" className="w-7 h-7" />
+          <div className="text-base lowercase" style={{ opacity: 0.8 }}>hackerhinge</div>
+        </div>
+        <h1 className="text-lg mb-4 text-center">{mode === "signin" ? "sign in" : "create account"}</h1>
         <div className="space-y-3">
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
-            className="rounded-md px-4 py-2 bg-white text-black w-full"
+            className="rounded-md px-4 py-2 border w-full bg-transparent hover:opacity-80"
+            style={{ borderColor: "var(--card-border)" }}
           >
             Continue with Google
           </button>
-          <div className="flex items-center gap-2 text-white/40 text-xs">
-            <div className="h-px flex-1 bg-white/10" />
+          <div className="flex items-center gap-2 text-xs" style={{ color: "var(--text-subtle)" }}>
+            <div className="h-px flex-1" style={{ background: "var(--card-border)" }} />
             <span>or</span>
-            <div className="h-px flex-1 bg-white/10" />
+            <div className="h-px flex-1" style={{ background: "var(--card-border)" }} />
           </div>
           <form onSubmit={mode === "signin" ? handleCredentialsSignIn : handleSignUp} className="space-y-3">
             <input
@@ -69,7 +74,8 @@ export default function SignInPage() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md bg-black border border-white/10 p-2 outline-none"
+              className="w-full rounded-md bg-transparent border p-2 outline-none"
+              style={{ borderColor: "var(--card-border)" }}
             />
             <input
               type="password"
@@ -77,20 +83,22 @@ export default function SignInPage() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md bg-black border border-white/10 p-2 outline-none"
+              className="w-full rounded-md bg-transparent border p-2 outline-none"
+              style={{ borderColor: "var(--card-border)" }}
             />
-            {error ? <div className="text-xs text-red-400">{error}</div> : null}
+            {error ? <div className="text-xs" style={{ color: "#d33" }}>{error}</div> : null}
             <button
               type="submit"
               disabled={loading}
-              className="rounded-md px-4 py-2 bg-white text-black w-full disabled:opacity-60"
+              className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-[var(--accent)] text-black"
             >
-              {loading ? "Please wait..." : mode === "signin" ? "Sign in" : "Sign up"}
+              {loading ? "please wait" : mode === "signin" ? "sign in" : "sign up"}
             </button>
           </form>
           <button
             onClick={() => setMode((m) => (m === "signin" ? "signup" : "signin"))}
-            className="w-full text-xs text-white/60 underline"
+            className="w-full text-xs underline hover:opacity-100"
+            style={{ opacity: 0.7 }}
           >
             {mode === "signin" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
           </button>
