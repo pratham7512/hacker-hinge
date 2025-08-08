@@ -79,7 +79,7 @@ export default function Home() {
   return (
     <div className="min-h-dvh flex flex-col items-center">
       <Nav />
-      <main className="flex-1 w-full flex flex-col items-center justify-center gap-6 p-6 pb-24 text-lg">
+      <main className="flex-1 w-full flex flex-col items-center justify-center gap-6 p-6 pb-28 text-lg">
         {loading ? (
           <div className="flex flex-col items-center gap-3">
             <div className="text-base text-white/80 flex items-center gap-2">

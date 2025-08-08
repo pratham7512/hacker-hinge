@@ -20,7 +20,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-dvh flex flex-col">
       <Nav />
-      <main className="p-6 max-w-2xl w-full mx-auto">
+      <main className="p-6 pb-28 max-w-2xl w-full mx-auto">
         <h1 className="text-xl mb-4">Your favorites</h1>
         {favorites.length === 0 ? (
           <p className="text-white/60">No favorites yet. Swipe right on jobs to save.</p>
