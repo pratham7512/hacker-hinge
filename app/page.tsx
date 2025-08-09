@@ -5,7 +5,7 @@ import Nav from "@/components/Nav";
 import JobCard from "@/components/JobCard";
 import Landing from "../components/Landing";
 import Blip from "@/components/Blip";
-import { TextShimmer } from "@/components/motion-primitives/text-shimmer";
+import { TextLoop } from "@/components/motion-primitives/text-loop";
 
 type Job = { id: string; title: string; url?: string; domain?: string; logo?: string; description?: string; role?: string; tags?: string[] };
 type Enriched = { description?: string; role?: string; tags?: string[]; company?: string; location?: string; compensation?: string; apply_url?: string };
@@ -91,9 +91,15 @@ export default function Home() {
       <main className="flex-1 w-full flex flex-col items-center justify-center gap-6 p-6 pb-28 text-lg">
         {showLandingLoading ? (
           <div className="flex flex-col items-center gap-3">
-            <div className="text-base text-white/80 flex items-center gap-2">
+            <div className="text-base text-white/80 flex items-center gap-3">
               <Blip size={12} />
-              <TextShimmer>digging databases, scraping websites, brewing coffee</TextShimmer>
+              <TextLoop className="font-mono text-sm">
+                <span>digging databases</span>
+                <span>scraping websites</span>
+                <span>fetching jobs</span>
+                <span>polishing summaries</span>
+                <span>curating YC roles</span>
+              </TextLoop>
             </div>
           </div>
         ) : status !== "authenticated" ? (

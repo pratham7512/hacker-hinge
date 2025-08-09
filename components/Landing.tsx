@@ -12,6 +12,7 @@ export default function Landing() {
         {/* Logo row: H, text, blip as full stop */}
         <div className="flex items-end align-baseline justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
           <div className="flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-h.svg" className="w-12 h-12 sm:w-16 sm:h-16" alt="H" />
             <h1 className="text-4xl sm:text-6xl font-bold lowercase tracking-wide leading-tight">hackerhinge</h1>
           </div>
@@ -27,7 +28,7 @@ export default function Landing() {
 
         <div className="mt-4 sm:mt-6">
           <AnimatedBackground className="rounded-xl bg-white/10" defaultValue="start" enableHover>
-            <Link data-id="start" href="/signin" className="inline-block rounded-md px-4 py-2 sm:px-6 sm:py-3 bg-white text-black text-sm sm:text-base font-semibold">
+            <Link data-id="start" href="/signin" className="inline-block rounded-md px-4 py-2 sm:px-6 sm:py-3 bg-[var(--accent)] text-black text-sm sm:text-base font-semibold">
               get started
             </Link>
           </AnimatedBackground>

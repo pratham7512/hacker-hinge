@@ -16,7 +16,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     const normalizedEmail = email.toLowerCase().trim();
 
     const vt = await prisma.verificationToken.findFirst({
-      where: { identifier: normalizedEmail, token: code },
+      where: { identifier: `${normalizedEmail}#signup`, token: code },
     });
     if (!vt || vt.expires < new Date()) {
       return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
@@ -31,7 +31,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     });
 
     // Delete token after use
-    await prisma.verificationToken.deleteMany({ where: { identifier: normalizedEmail } });
+    await prisma.verificationToken.deleteMany({ where: { identifier: `${normalizedEmail}#signup` } });
 
     return NextResponse.json({ ok: true });
   } catch (err: unknown) {

@@ -4,10 +4,11 @@ import { signIn } from "next-auth/react";
 import { TextShimmer } from "@/components/motion-primitives/text-shimmer";
 
 export default function SignInPage() {
-  const [mode, setMode] = useState<"signin" | "signup" | "verify">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "verify" | "reset" | "reset-verify">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,10 +78,53 @@ export default function SignInPage() {
     }
   }
 
+  async function handleRequestReset(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      await fetch("/api/auth/request-reset", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setMode("reset-verify");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerifyReset(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await fetch("/api/auth/verify-reset", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, code, newPassword }),
+      });
+      if (!r.ok) {
+        const data = (await r.json().catch(() => ({}))) as { error?: string };
+        throw new Error(data.error || "Reset failed");
+      }
+      await signIn("credentials", { redirect: true, callbackUrl: "/", email, password: newPassword });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-dvh flex items-center justify-center p-6">
       <div className="bg-[var(--card-bg)] border rounded-xl p-6 w-full max-w-sm" style={{ borderColor: "var(--card-border)" }}>
         <div className="flex items-center justify-center gap-2 mb-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-h.svg" alt="H" className="w-7 h-7" />
           <div className="text-base lowercase" style={{ opacity: 0.8 }}>hackerhinge</div>
         </div>
@@ -88,7 +132,7 @@ export default function SignInPage() {
         <div className="space-y-3">
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
-            className="rounded-md px-4 py-2 border w-full bg-white text-black hover:opacity-90"
+            className="rounded-md px-4 py-2 border w-full bg-[var(--accent)] text-black hover:opacity-90"
           >
             Continue with Google
           </button>
@@ -114,7 +158,7 @@ export default function SignInPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-white text-black"
+                className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-[var(--accent)] text-black"
               >
                 {loading ? (<TextShimmer className="inline">verifying</TextShimmer>) : "verify"}
               </button>
@@ -132,6 +176,58 @@ export default function SignInPage() {
                 style={{ opacity: 0.7 }}
               >
                 resend code
+              </button>
+            </form>
+          ) : mode === "reset" ? (
+            <form onSubmit={handleRequestReset} className="space-y-3">
+              <input
+                type="email"
+                required
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-md bg-transparent border p-2 outline-none"
+                style={{ borderColor: "var(--card-border)" }}
+              />
+              {error ? <div className="text-xs" style={{ color: "#d33" }}>{error}</div> : null}
+              <button
+                type="submit"
+                disabled={loading}
+                className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-[var(--accent)] text-black"
+              >
+                {loading ? (<TextShimmer className="inline">sending code</TextShimmer>) : "send reset code"}
+              </button>
+            </form>
+          ) : mode === "reset-verify" ? (
+            <form onSubmit={handleVerifyReset} className="space-y-3">
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                required
+                placeholder="6-digit code"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="w-full rounded-md bg-transparent border p-2 outline-none"
+                style={{ borderColor: "var(--card-border)" }}
+              />
+              <input
+                type="password"
+                required
+                minLength={8}
+                placeholder="New password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full rounded-md bg-transparent border p-2 outline-none"
+                style={{ borderColor: "var(--card-border)" }}
+              />
+              {error ? <div className="text-xs" style={{ color: "#d33" }}>{error}</div> : null}
+              <button
+                type="submit"
+                disabled={loading}
+                className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-[var(--accent)] text-black"
+              >
+                {loading ? (<TextShimmer className="inline">resetting</TextShimmer>) : "reset password"}
               </button>
             </form>
           ) : (
@@ -158,7 +254,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={loading}
-              className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-white text-black"
+              className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-[var(--accent)] text-black"
             >
               {loading ? (<TextShimmer className="inline">please wait</TextShimmer>) : mode === "signin" ? "sign in" : "sign up"}
             </button>
@@ -171,6 +267,16 @@ export default function SignInPage() {
           >
             {mode === "signin" ? "Don't have an account? Sign up" : mode === "signup" ? "Already have an account? Sign in" : "Back to sign in"}
           </button>
+          {mode === "signin" ? (
+            <button
+              onClick={() => setMode("reset")}
+              className="w-full text-xs underline hover:opacity-100"
+              style={{ opacity: 0.7 }}
+              type="button"
+            >
+              Forgot password?
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

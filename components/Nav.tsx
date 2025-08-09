@@ -14,7 +14,8 @@ export default function Nav() {
     <>
       {/* Top bar visible on all screens, simplified for mobile */}
       <nav className="w-full flex items-center justify-between p-5 border-b" style={{ borderColor: "var(--card-border)" }}>
-        <Link href="/" className="font-semibold flex items-center gap-2">
+          <Link href="/" className="font-semibold flex items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-h.svg" alt="H" className="w-7 h-7" />
           <span className="hidden sm:inline lowercase tracking-wide" style={{ opacity: 0.9 }}>hackerhinge</span>
         </Link>
@@ -37,16 +38,16 @@ export default function Nav() {
           )}
         </div>
       </nav>
-      {/* Bottom menu - now visible on all screens with animated background */}
+      {/* Bottom menu - two options with pill highlight, compact height */}
       {!isLanding ? (
-        <div className="fixed bottom-0 left-0 right-0 border-t z-50 bg-black/80 backdrop-blur" style={{ borderColor: "var(--card-border)" }}>
-          <div className="max-w-xl mx-auto flex items-center justify-around py-3">
+        <div className="fixed bottom-0 left-0 right-0 border-t z-50 bg-black/90 backdrop-blur" style={{ borderColor: "var(--card-border)" }}>
+          <div className="max-w-xl mx-auto flex items-center justify-center py-2">
             <AnimatedBackground className="rounded-xl bg-white/10" defaultValue={onDashboard ? "dashboard" : "cards"} enableHover>
-              <Link data-id="cards" href="/" className="px-8 py-3 text-base rounded-xl" aria-label="Cards">
-                <img src="/icons/cards.svg" alt="cards" className={`w-7 h-7 ${onDashboard ? 'opacity-60' : 'opacity-100'}`} />
+              <Link data-id="cards" href="/" className="px-4 py-2 text-sm sm:text-base rounded-xl text-white/85" aria-label="Cards">
+                Cards
               </Link>
-              <Link data-id="dashboard" href="/dashboard" className="px-8 py-3 text-base rounded-xl" aria-label="Dashboard">
-                <img src="/icons/home.svg" alt="dashboard" className={`w-7 h-7 ${onDashboard ? 'opacity-100' : 'opacity-60'}`} />
+              <Link data-id="dashboard" href="/dashboard" className="px-4 py-2 text-sm sm:text-base rounded-xl text-white/85" aria-label="Dashboard">
+                Dashboard
               </Link>
             </AnimatedBackground>
           </div>
