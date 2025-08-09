@@ -14,7 +14,7 @@ export default function Landing() {
             <img src="/logo-h.svg" className="w-12 h-12 sm:w-16 sm:h-16" alt="H" />
             <h1 className="text-4xl sm:text-6xl font-bold lowercase tracking-wide leading-tight">hackerhinge</h1>
           </div>
-          <span className="mb-[6px] ml-0.5"><Blip size={10} /></span>
+          <span className="mb-[9px] ml-0.3"><Blip size={10} /></span>
         </div>
         <p className="text-white/85 mt-2 text-base sm:text-xl leading-snug max-w-[92vw] sm:max-w-3xl">
           The minimalist way to explore Hacker News jobs — YC startups, Who’s Hiring and HN Jobs — with fast swipes and
