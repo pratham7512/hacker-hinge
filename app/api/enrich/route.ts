@@ -75,7 +75,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true, data: parsed });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Failed to enrich" }, { status: 500 });
   }
 }

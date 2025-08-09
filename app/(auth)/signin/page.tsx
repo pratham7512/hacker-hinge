@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { TextShimmer } from "@/components/motion-primitives/text-shimmer";
 
 export default function SignInPage() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "verify">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +39,35 @@ export default function SignInPage() {
         const data = await r.json().catch(() => ({}));
         throw new Error(data.error || "Failed to sign up");
       }
+      // Send OTP and move to verify step
+      await fetch("/api/auth/request-otp", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setMode("verify");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, code, password }),
+      });
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        throw new Error(data.error || "Verification failed");
+      }
       await signIn("credentials", { redirect: true, callbackUrl: "/", email, password });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Something went wrong";
@@ -57,8 +88,7 @@ export default function SignInPage() {
         <div className="space-y-3">
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
-            className="rounded-md px-4 py-2 border w-full bg-transparent hover:opacity-80"
-            style={{ borderColor: "var(--card-border)" }}
+            className="rounded-md px-4 py-2 border w-full bg-white text-black hover:opacity-90"
           >
             Continue with Google
           </button>
@@ -67,8 +97,46 @@ export default function SignInPage() {
             <span>or</span>
             <div className="h-px flex-1" style={{ background: "var(--card-border)" }} />
           </div>
-          <form onSubmit={mode === "signin" ? handleCredentialsSignIn : handleSignUp} className="space-y-3">
-            <input
+          {mode === "verify" ? (
+            <form onSubmit={handleVerify} className="space-y-3">
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                required
+                placeholder="6-digit code"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="w-full rounded-md bg-transparent border p-2 outline-none"
+                style={{ borderColor: "var(--card-border)" }}
+              />
+              {error ? <div className="text-xs" style={{ color: "#d33" }}>{error}</div> : null}
+              <button
+                type="submit"
+                disabled={loading}
+                className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-white text-black"
+              >
+                {loading ? (<TextShimmer className="inline">verifying</TextShimmer>) : "verify"}
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setLoading(true);
+                  setError(null);
+                  try {
+                    await fetch("/api/auth/request-otp", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email }) });
+                  } catch {}
+                  setLoading(false);
+                }}
+                className="w-full text-xs underline hover:opacity-100"
+                style={{ opacity: 0.7 }}
+              >
+                resend code
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={mode === "signin" ? handleCredentialsSignIn : handleSignUp} className="space-y-3">
+              <input
               type="email"
               required
               placeholder="Email"
@@ -77,7 +145,7 @@ export default function SignInPage() {
               className="w-full rounded-md bg-transparent border p-2 outline-none"
               style={{ borderColor: "var(--card-border)" }}
             />
-            <input
+              <input
               type="password"
               required
               placeholder="Password"
@@ -90,17 +158,18 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={loading}
-              className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-[var(--accent)] text-black"
+              className="rounded-md px-4 py-2 w-full disabled:opacity-60 bg-white text-black"
             >
-              {loading ? "please wait" : mode === "signin" ? "sign in" : "sign up"}
+              {loading ? (<TextShimmer className="inline">please wait</TextShimmer>) : mode === "signin" ? "sign in" : "sign up"}
             </button>
-          </form>
+            </form>
+          )}
           <button
-            onClick={() => setMode((m) => (m === "signin" ? "signup" : "signin"))}
+            onClick={() => setMode((m) => (m === "signin" ? "signup" : m === "signup" ? "signin" : "signin"))}
             className="w-full text-xs underline hover:opacity-100"
             style={{ opacity: 0.7 }}
           >
-            {mode === "signin" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+            {mode === "signin" ? "Don't have an account? Sign up" : mode === "signup" ? "Already have an account? Sign in" : "Back to sign in"}
           </button>
         </div>
       </div>

@@ -32,6 +32,10 @@ export const authOptions: NextAuthOptions = {
         const isValid = await compare(password, user.passwordHash);
         if (!isValid) return null;
 
+        if (!user.emailVerified) {
+          throw new Error("Email not verified. Please verify with OTP.");
+        }
+
         const resultUser: NextAuthUser = {
           id: user.id,
           email: user.email || undefined,
@@ -44,6 +48,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   callbacks: {

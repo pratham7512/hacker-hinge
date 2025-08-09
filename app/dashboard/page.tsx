@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import Link from "next/link";
 import FavoriteRow from "./row";
 import Nav from "@/components/Nav";
 import { redirect } from "next/navigation";

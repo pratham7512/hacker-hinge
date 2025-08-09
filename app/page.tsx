@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import Nav from "@/components/Nav";
 import JobCard from "@/components/JobCard";
 import Landing from "../components/Landing";
 import Blip from "@/components/Blip";
+import { TextShimmer } from "@/components/motion-primitives/text-shimmer";
 
 type Job = { id: string; title: string; url?: string; domain?: string; logo?: string; description?: string; role?: string; tags?: string[] };
 type Enriched = { description?: string; role?: string; tags?: string[]; company?: string; location?: string; compensation?: string; apply_url?: string };
@@ -49,12 +50,10 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [index, jobs]);
+  }, [index, jobs, enrichCache]);
 
-  async function handleSwipe(dir: "left" | "right", job: Job) {
-    // Advance immediately for responsiveness
+  const handleSwipe = useCallback(async (dir: "left" | "right", job: Job) => {
     setIndex((i) => Math.min(i + 1, jobs.length));
-    // Fire-and-forget save to favorites
     if (dir === "right") {
       void fetch("/api/favorites", {
         method: "POST",
@@ -63,7 +62,7 @@ export default function Home() {
         keepalive: true,
       }).catch(() => {});
     }
-  }
+  }, [jobs.length]);
 
   // Arrow key support for desktop
   useEffect(() => {
@@ -74,24 +73,28 @@ export default function Home() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [current]);
+  }, [current, handleSwipe]);
+
+  // Wait for first job's enrichment before showing cards
+  const firstJobEnriched = useMemo(() => {
+    const j = jobs[0];
+    if (!j) return false;
+    const enriched = enrichCache[j.id];
+    return Boolean(enriched?.description);
+  }, [jobs, enrichCache]);
+
+  const showLandingLoading = loading || (status === "authenticated" && (!jobs.length || !firstJobEnriched));
 
   return (
     <div className="min-h-dvh flex flex-col items-center">
       <Nav />
       <main className="flex-1 w-full flex flex-col items-center justify-center gap-6 p-6 pb-28 text-lg">
-        {loading ? (
+        {showLandingLoading ? (
           <div className="flex flex-col items-center gap-3">
             <div className="text-base text-white/80 flex items-center gap-2">
               <Blip size={12} />
-              <span>fetching jobs</span>
-              <span className="type-ellipses" aria-hidden>...</span>
+              <TextShimmer>digging databases, scraping websites, brewing coffee</TextShimmer>
             </div>
-            <style jsx>{`
-              @keyframes dots { 0%{content:""} 33%{content:"."} 66%{content:".."} 100%{content:"..."} }
-              .type-ellipses::after { content: ""; animation: dots 1.2s steps(3,end) infinite; }
-              .type-ellipses { width: 1ch; display: inline-block; text-align: left }
-            `}</style>
           </div>
         ) : status !== "authenticated" ? (
           <Landing />

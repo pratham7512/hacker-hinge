@@ -39,7 +39,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Missing id or jobId" }, { status: 400 });
     }
     return NextResponse.json({ ok: true });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }

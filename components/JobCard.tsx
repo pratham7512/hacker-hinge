@@ -1,5 +1,6 @@
 "use client";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { TextShimmer } from "@/components/motion-primitives/text-shimmer";
 import { useEffect, useState, useMemo } from "react";
 
 type Job = { id: string; title: string; url?: string; domain?: string; logo?: string; description?: string; role?: string; tags?: string[] };
@@ -97,14 +98,10 @@ export default function JobCard({
       ) : (
         <div className="mt-4 flex items-center gap-2 text-white/70 text-sm">
           <span className="inline-flex align-middle"><span className="inline-block rounded-full bg-[var(--accent)] blip-s" /></span>
-          <span>summarizing</span>
-          <span className="type-ellipses" aria-hidden></span>
+          <TextShimmer>summarizing this job...</TextShimmer>
           <style jsx>{`
             @keyframes blipOnOff { 0%, 49% { opacity: 0 } 50%, 100% { opacity: 1 } }
             .blip-s { width: 8px; height: 8px; animation: blipOnOff .6s steps(1,end) infinite }
-            @keyframes dots { 0%{content:""} 33%{content:"."} 66%{content:".."} 100%{content:"..."} }
-            .type-ellipses::after { content: ""; animation: dots 1.2s steps(3,end) infinite; }
-            .type-ellipses { width: 1ch; display: inline-block; text-align: left }
           `}</style>
         </div>
       )}

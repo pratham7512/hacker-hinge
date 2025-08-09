@@ -61,7 +61,7 @@ function AutoCard({ card, isTop, indexInStack, onDone }: { card: InfoCard; isTop
       onComplete: () => onDone && onDone(),
     });
     return () => controls.stop();
-  }, [isTop, x]);
+  }, [isTop, x, onDone]);
 
   const translateY = indexInStack * 6;
   const scale = 1 - indexInStack * 0.025;
